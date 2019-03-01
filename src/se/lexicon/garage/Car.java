@@ -21,4 +21,8 @@ public class Car extends Vehicle{
             throw new IllegalArgumentException("Topspeed can not be negative.");
         }
     }
+
+    public int getTopSpeed() {
+        return topSpeed;
+    }
 }

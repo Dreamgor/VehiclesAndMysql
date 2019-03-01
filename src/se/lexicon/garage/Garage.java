@@ -2,6 +2,7 @@ package se.lexicon.garage;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Garage implements GarageInterface<Vehicle> {
 
@@ -9,23 +10,48 @@ public class Garage implements GarageInterface<Vehicle> {
 
 
 //    {
-//        for(int i=0; i<72; i++){
-//            vehicles.add(new EmptyVehicle("empty"));
-//        }
+//
 //    }
     public Garage() throws SQLException {
         vehicles = MysqlConnection.getVehiclesDB();
+        for(int i=vehicles.size(); i<72; i++){
+            vehicles.add(new EmptyVehicle("empty"));
+        }
     }
 
     public int park(Vehicle vehicle){
         int lotNumber = -1;
-        for(Vehicle v : vehicles) {
-            if(v instanceof EmptyVehicle) {
-                lotNumber = vehicles.indexOf(v);
+        Vehicle tempVehic = null;
+
+        Iterator iter = vehicles.iterator();
+        boolean keepLooping = true;
+
+        while(iter.hasNext() && keepLooping) {
+            tempVehic = (Vehicle) iter.next();
+            if (tempVehic instanceof EmptyVehicle) {
+                lotNumber = vehicles.indexOf(tempVehic);
                 vehicles.add(lotNumber, vehicle);
-                return vehicles.indexOf(vehicle);
+                keepLooping = false;
+
             }
         }
+//        for(Vehicle v : vehicles) {
+//            if(v instanceof EmptyVehicle) {
+//                lotNumber = vehicles.indexOf(v);
+//                vehicles.add(lotNumber, vehicle);
+//                tempVehic = v;
+//                return vehicles.indexOf(vehicle);
+//
+//            }
+//        }
+        if(!keepLooping){
+            try {
+                MysqlConnection.addVehicle(vehicle);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         return lotNumber;
     }
 

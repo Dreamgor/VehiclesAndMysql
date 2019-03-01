@@ -45,18 +45,13 @@ public class MysqlConnection {
     return vehicles;
   }
 
-  public void addVehicle(Garage g){
-    Scanner sc = new Scanner(System.in);
+  public static void addVehicle(Vehicle v) throws SQLException {
     Connection conn = null;
     Statement stat = null;
     ResultSet rs = null;
 
-    String brand = sc.nextLine();
-    int topspeed = sc.nextInt();
+   // boolean setEmpty = false;
 
-    Car c = new car(brand, topspeed);
-
-    g.park(c);
 
     try {
       conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sakila", "root", "Deadthief?55");
@@ -64,14 +59,26 @@ public class MysqlConnection {
 
       stat = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
+      rs = stat.executeQuery("Select * From vehicle");
 
+      if(v instanceof Car){
+        Car tempCar = (Car) v;
+        rs.afterLast();
+        stat.executeUpdate("Insert Into vehicle(maker, top_speed, type) values(\'" + tempCar.getBrand() + "\', \'"
+                + tempCar.getTopSpeed() + "\', \'car\')");
+//        while(rs.next() && !setEmpty){
+//          if(rs.getString("type").equals("empty")){
+//            rs = stat.executeQuery("Insert Into vehicle(maker, topspeed) Values(" + tempCar.getBrand() + ", "
+//                    + tempCar.getTopSpeed() + ")");
+//            rs.updateRow();
+//            setEmpty = true;
+//          }
+//        }
+        //if(!setEmpty){
+        //}
 
-      while(rs.next()){
-        if(rs.getString("type").equals("empty")){
-          rs = stat.executeQuery("Insert Into vehicle(maker, topspeed) Values(" + brand + ", "
-                  + topspeed + ")");
-        }
       }
+
     }catch(SQLException e){
       e.printStackTrace();
     }finally{

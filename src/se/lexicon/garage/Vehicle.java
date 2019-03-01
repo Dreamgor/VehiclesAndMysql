@@ -19,7 +19,11 @@ public abstract class Vehicle {
         }
     }
 
-    public String toString() {
+  public String getBrand() {
+    return brand;
+  }
+
+  public String toString() {
         return brand;
     }
 }
